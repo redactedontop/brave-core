@@ -68,6 +68,7 @@ class ConversationAPIClient {
     GetSuggestedAndDedupeTopicsForFocusTabs,
     GetFocusTabsForTopic,
     PageScreenshot,
+    ToolUse,
     // TODO(petemill):
     // - Search in-progress?
     // - Sources?
@@ -76,15 +77,28 @@ class ConversationAPIClient {
     //   to prompts? (e.g. SUMMARIZE_PAGE, PARAPHRASE, etc.)
   };
 
+  using Content = std::variant<std::vector<std::string>,
+                               std::vector<mojom::ContentBlockPtr>>;
+
   struct ConversationEvent {
     mojom::CharacterType role;
     ConversationEventType type;
-    std::vector<std::string> content;
+    Content content;
+
+    // Optional properties:
     std::string topic;  // Used in GetFocusTabsForTopic event.
+
+    // Calls made within this message/event, usually (always?)
+    // from the assistant.
+    std::vector<mojom::ToolUseEventPtr> tool_calls;
+
+    // Used when content field has the results of the
+    // matching tool call.
+    std::string tool_call_id;
 
     ConversationEvent(mojom::CharacterType,
                       ConversationEventType,
-                      const std::vector<std::string>&,
+                      Content,
                       const std::string& = "");
     ConversationEvent();
     ~ConversationEvent();
@@ -106,6 +120,7 @@ class ConversationAPIClient {
 
   virtual void PerformRequest(
       std::vector<ConversationEvent> conversation,
+      const EngineConsumer::Tools tools,
       const std::string& selected_language,
       GenerationDataCallback data_received_callback,
       GenerationCompletedCallback completed_callback,
@@ -120,6 +135,7 @@ class ConversationAPIClient {
  protected:
   std::string CreateJSONRequestBody(
       const std::vector<ConversationEvent>& conversation,
+      const EngineConsumer::Tools tools,
       const std::string& selected_language,
       const std::optional<std::string>& model_name,
       const bool is_sse_enabled);
@@ -135,6 +151,7 @@ class ConversationAPIClient {
  private:
   void PerformRequestWithCredentials(
       std::vector<ConversationEvent> conversation,
+      const EngineConsumer::Tools tools,
       const std::string& selected_language,
       const std::optional<std::string>& model_name,
       GenerationDataCallback data_received_callback,

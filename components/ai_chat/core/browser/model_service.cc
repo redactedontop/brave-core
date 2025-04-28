@@ -131,6 +131,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = "chat-leo-expanded";
       model->display_name = "Mixtral";
       model->vision_support = false;
+      model->supports_tools = false;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -150,6 +151,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = "chat-deepseek-r1";
       model->display_name = "DeepSeek R1";
       model->vision_support = false;
+      model->supports_tools = false;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -169,6 +171,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = kClaudeHaikuModelKey;
       model->display_name = "Claude Haiku";
       model->vision_support = true;
+      model->supports_tools = true;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -188,6 +191,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = kClaudeSonnetModelKey;
       model->display_name = "Claude Sonnet";
       model->vision_support = true;
+      model->supports_tools = true;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -209,6 +213,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = "chat-basic";
       model->display_name = "Llama 3.1 8B";
       model->vision_support = false;
+      model->supports_tools = false;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -230,6 +235,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = "chat-qwen";
       model->display_name = "Qwen 14B";
       model->vision_support = false;
+      model->supports_tools = false;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 
@@ -251,6 +257,7 @@ const std::vector<mojom::ModelPtr>& GetLeoModels() {
       model->key = "chat-vision-basic";
       model->display_name = "Llama 3.2 11B Vision";
       model->vision_support = true;
+      model->supports_tools = false;
       model->options =
           mojom::ModelOptions::NewLeoModelOptions(std::move(options));
 

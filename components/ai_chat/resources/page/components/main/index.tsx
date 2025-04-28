@@ -79,13 +79,14 @@ function Main() {
     !shouldShowStorageNotice && // Don't show premium prompt and storage notice
     aiChatContext.canShowPremiumPrompt &&
     conversationContext.associatedContentInfo === null && // AssociatedContent request has finished and this is a standalone conversation
-    !aiChatContext.isPremiumUser
+    !aiChatContext.isPremiumUser;
 
 
   const isLastTurnBraveSearchSERPSummary =
     conversationContext.conversationHistory.at(-1)?.fromBraveSearchSERP ?? false
 
   const showContextToggle =
+    !aiChatContext.isSmartPageContentFeatureEnabled &&
     (conversationContext.conversationHistory.length === 0 ||
       isLastTurnBraveSearchSERPSummary) &&
     !!conversationContext.associatedContentInfo.length

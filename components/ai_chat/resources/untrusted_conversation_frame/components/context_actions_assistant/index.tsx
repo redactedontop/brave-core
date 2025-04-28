@@ -19,8 +19,8 @@ type RatingStatus = (typeof statuses)[number]
 interface ContextActionsAssistantProps {
   turnUuid?: string
   turnModelKey?: string
-  onEditAnswerClicked: () => void
-  onCopyTextClicked: () => void
+  onEditAnswerClicked?: () => void
+  onCopyTextClicked?: () => void
 }
 
 export default function ContextActionsAssistant(
@@ -58,7 +58,10 @@ export default function ContextActionsAssistant(
 
   return (
     <div className={styles.actionsWrapper}>
+      {props.onCopyTextClicked &&
       <CopyButton onClick={props.onCopyTextClicked} />
+      }
+      {props.onEditAnswerClicked &&
       <Button
         onClick={props.onEditAnswerClicked}
         fab
@@ -69,6 +72,7 @@ export default function ContextActionsAssistant(
       >
         <Icon name='edit-pencil' />
       </Button>
+      }
       <Button
         onClick={() => handleLikeOrDislikeAnswer('liked')}
         fab
