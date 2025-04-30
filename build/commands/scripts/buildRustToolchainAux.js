@@ -13,6 +13,7 @@ program
   .option('--tag <tag>', '(optional) A Chromium tag to be checked out for generating this toolchain.')
   .action((options) => {
     if (options.tag) {
+      util.runGit(config.srcDir, ['remote', 'show', 'origin'])
       tagRef = 'refs/tags/' + options.tag
       util.runGit(config.srcDir, ['fetch', 'origin', tagRef + ':' + tagRef])
       util.runGit(config.srcDir, ['reset', '--hard', tagRef])
