@@ -15,12 +15,14 @@ import {
   SearchState,
   SearchActions,
   SearchEngineInfo,
-  defaultSearchEngine,
   defaultSearchActions } from './search_state'
 
 const enabledSearchEnginesStorageKey = 'search-engines'
 
-function loadEnabledSearchEngines(availableEngines: SearchEngineInfo[]) {
+function loadEnabledSearchEngines(
+  availableEngines: SearchEngineInfo[],
+  defaultSearchEngine: string
+) {
   const set = new Set([defaultSearchEngine])
   const data = localStorage.getItem(enabledSearchEnginesStorageKey)
   if (!data) {
@@ -60,6 +62,7 @@ export function createSearchHandler(
     return defaultSearchActions()
   }
 
+  const defaultSearchEngine = loadTimeData.getString('ntpSearchDefaultHost')
   const searchProxy = SearchBoxProxy.getInstance()
   const newTabProxy = NewTabPageProxy.getInstance()
 
@@ -71,7 +74,8 @@ export function createSearchHandler(
 
     store.update({
       searchEngines,
-      enabledSearchEngines: loadEnabledSearchEngines(searchEngines)
+      enabledSearchEngines:
+        loadEnabledSearchEngines(searchEngines, defaultSearchEngine)
     })
   }
 
