@@ -1,6 +1,16 @@
 ### Keyed Services
 
-Most features should be scoped to a Profile/BrowserContext and be BrowserContextKeyedServices per [profile-architecture](https://www.chromium.org/developers/design-documents/profile-architecture/). What this means is that all associated preferences and other locally stored state will be per-profile. A service may sometimes be shared between the regular and OTR profile (check with sec-team) and it may also be ununavailable for certain profile types. `ProfileKeyedServiceFactory/ProfileKeyedServiceFactoryIOS` [profile_keyed_service_factory.md](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/profiles/profile_keyed_service_factory.md;bpv=0) with `ProfileSelections::Builder` is the preferred method to use for determining which (if any) profile should be used for the service.
+Most features should be scoped to a Profile/BrowserContext and be
+BrowserContextKeyedServices per
+[profile-architecture](https://www.chromium.org/developers/design-documents/profile-architecture/).
+What this means is that all associated preferences and other locally stored
+state will be per-profile. A service may sometimes be shared between the regular
+and OTR profile (check with sec-team) and it may also be ununavailable for
+certain profile types.
+`ProfileKeyedServiceFactory/ProfileKeyedServiceFactoryIOS`
+[profile_keyed_service_factory.md](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/profiles/profile_keyed_service_factory.md;bpv=0)
+with `ProfileSelections::Builder` is the preferred method to use for determining
+which (if any) profile should be used for the service.
 
 
 keyed-service-docs
@@ -13,7 +23,9 @@ MyServiceFactory::MyServiceFactory()
               .Build()) { ... }
 ```
 
-If you have more complicated logic then use `BrowserContextKeyedServiceFactory::GetBrowserContextToUse` and return nullptr if the service is not available for the given `BrowserContext`.
+If you have more complicated logic then use
+`BrowserContextKeyedServiceFactory::GetBrowserContextToUse` and return nullptr
+if the service is not available for the given `BrowserContext`.
 
 ```cpp
 content::BrowserContext* MyServiceFactory::GetBrowserContextToUse(
@@ -24,11 +36,28 @@ content::BrowserContext* MyServiceFactory::GetBrowserContextToUse(
 }
 ```
 
-Do not explicitly return null from other methods like `BuildServiceInstanceForBrowserContext`, `GetForProfile`, etc... If you return nullptr from `GetBrowserContextToUse` or configure `ProfileSelections`, the service will already be null. Avoid using helper methods like `IsAllowedForProfile` to see if a service is available for a particular profile as these are often used incorrectly/inconsistently. The preferred method is just a null check on the service itself. Prefer dependency injection [structure-modularity](https://chromium.googlesource.com/chromium/src/+/main/docs/chrome_browser_design_principles.md#structure_modularity) and pass in the services you require instead of calling the factory methods internally. This reduces dependencies on the factories and makes unit testing/mocking simpler.
+Do not explicitly return null from other methods like
+`BuildServiceInstanceForBrowserContext`, `GetForProfile`, etc... If you return
+nullptr from `GetBrowserContextToUse` or configure `ProfileSelections`, the
+service will already be null. Avoid using helper methods like
+`IsAllowedForProfile` to see if a service is available for a particular profile
+as these are often used incorrectly/inconsistently. The preferred method is just
+a null check on the service itself. Prefer dependency injection
+[structure-modularity](https://chromium.googlesource.com/chromium/src/+/main/docs/chrome_browser_design_principles.md#structure_modularity)
+and pass in the services you require instead of calling the factory methods
+internally. This reduces dependencies on the factories and makes unit
+testing/mocking simpler.
 
 #### Keyed Services and Mojo
 
-Avoid adding wrapper classes around keyed services to implement mojo interfaces. It's usually better to implement them directly in the service. Factories should implement `GetRemoteForProfile` to return a `mojo::PendingRemote` and `BindRemoteForProfile` when you are passing in a `mojo::PendingReceiver`. The keyed service should implement `MakeRemote()` to return the `mojo::PendingRemote`. Please always ensure that you check to make sure the service is not null before calling `MakeRemote()` and return an empty pending remote if it is `mojo::PendingRemote<mojom::FakeService>()`.
+Avoid adding wrapper classes around keyed services to implement mojo interfaces.
+It's usually better to implement them directly in the service. Factories should
+implement `GetRemoteForProfile` to return a `mojo::PendingRemote` and
+`BindRemoteForProfile` when you are passing in a `mojo::PendingReceiver`. The
+keyed service should implement `MakeRemote()` to return the
+`mojo::PendingRemote`. Please always ensure that you check to make sure the
+service is not null before calling `MakeRemote()` and return an empty pending
+remote if it is `mojo::PendingRemote<mojom::FakeService>()`.
 
 C++
 
@@ -97,11 +126,16 @@ public @Nullable FakeService getForProfile(Profile profile,
 
 #### IOS
 
-IOS has separate factories because Profile subclasses `web::BrowserState` instead of `content::BrowserContext`, but the same principles apply to `ProfileKeyedServiceFactoryIOS`.
+IOS has separate factories because Profile subclasses `web::BrowserState`
+instead of `content::BrowserContext`, but the same principles apply to
+`ProfileKeyedServiceFactoryIOS`.
 
 #### IOS and Desktop profile checks
 
-TODO - standardize a way to maintain consistency between `GetBrowserContextToUse` methods on desktop and android. Possibly using some constants like `kRegular`, `kIncognito`, `kTor` so the same code can be used to check both `Profile` and `ProfileIOS`
+TODO - standardize a way to maintain consistency between
+`GetBrowserContextToUse` methods on desktop and android. Possibly using some
+constants like `kRegular`, `kIncognito`, `kTor` so the same code can be used to
+check both `Profile` and `ProfileIOS`
 
 #### IOS keyed services and mojo
 
