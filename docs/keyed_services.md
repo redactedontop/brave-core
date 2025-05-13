@@ -1,7 +1,9 @@
 ### Keyed Services
 
-Most features should be scoped to a Profile/BrowserContext and be BrowserContextKeyedServices per https://www.chromium.org/developers/design-documents/profile-architecture/. What this means is that all associated preferences and other locally stored state will be per-profile. A service may sometimes be shared between the regular and OTR profile (check with sec-team) and it may also be ununavailable for certain profile types. `ProfileKeyedServiceFactory/ProfileKeyedServiceFactoryIOS` with `ProfileSelections::Builder` is the preferred method to use for determining which (if any) profile should be used for the service.
+Most features should be scoped to a Profile/BrowserContext and be BrowserContextKeyedServices per [profile-architecture](https://www.chromium.org/developers/design-documents/profile-architecture/). What this means is that all associated preferences and other locally stored state will be per-profile. A service may sometimes be shared between the regular and OTR profile (check with sec-team) and it may also be ununavailable for certain profile types. `ProfileKeyedServiceFactory/ProfileKeyedServiceFactoryIOS` [profile_keyed_service_factory.md](https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/profiles/profile_keyed_service_factory.md;bpv=0) with `ProfileSelections::Builder` is the preferred method to use for determining which (if any) profile should be used for the service.
 
+
+keyed-service-docs
 ```cpp
 MyServiceFactory::MyServiceFactory()
     : ProfileKeyedServiceFactory(
@@ -22,7 +24,7 @@ content::BrowserContext* MyServiceFactory::GetBrowserContextToUse(
 }
 ```
 
-Do not explicitly return null from other methods like `BuildServiceInstanceForBrowserContext`, `GetForProfile`, etc... If you return nullptr from `GetBrowserContextToUse` or configure `ProfileSelections`, the service will already be null. Avoid using helper methods like `IsAllowedForProfile` to see if a service is available for a particular profile as these are often used incorrectly/inconsistently. The preferred method is just a null check on the service itself. Prefer dependency injection https://chromium.googlesource.com/chromium/src/+/main/docs/chrome_browser_design_principles.md#structure_modularity and pass in the services you require instead of calling the factory methods internally. This reduces dependencies on the factories and makes unit testing/mocking simpler.
+Do not explicitly return null from other methods like `BuildServiceInstanceForBrowserContext`, `GetForProfile`, etc... If you return nullptr from `GetBrowserContextToUse` or configure `ProfileSelections`, the service will already be null. Avoid using helper methods like `IsAllowedForProfile` to see if a service is available for a particular profile as these are often used incorrectly/inconsistently. The preferred method is just a null check on the service itself. Prefer dependency injection [structure-modularity](https://chromium.googlesource.com/chromium/src/+/main/docs/chrome_browser_design_principles.md#structure_modularity) and pass in the services you require instead of calling the factory methods internally. This reduces dependencies on the factories and makes unit testing/mocking simpler.
 
 #### Keyed Services and Mojo
 
