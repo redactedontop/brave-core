@@ -135,9 +135,6 @@ mojo::PendingRemote<fake::mojom::FakeService> FakeServiceFactory::GetForProfile(
 
 brave/ios/browser/fake/fake_service_factory_wrapper.h
 ```objc
-#import <Foundation/Foundation.h>
-#include "keyed_service_factory_wrapper.h"  // NOLINT
-
 @protocol FakeFakeService;
 
 OBJC_EXPORT
@@ -145,8 +142,6 @@ NS_SWIFT_NAME(Fake.FakeServiceFactory)
 @interface FakeFakeServiceFactory
     : KeyedServiceFactoryWrapper < id <FakeFakeService>
 > @end
-
-#endif  // BRAVE_IOS_BROWSER_SKUS_SKUS_SDK_FACTORY_WRAPPERS_H_
 ```
 
 swift
