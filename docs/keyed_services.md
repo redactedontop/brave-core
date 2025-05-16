@@ -57,70 +57,70 @@ implement `GetRemoteForProfile` to return a `mojo::PendingRemote` and
 keyed service should implement `MakeRemote()` to return the
 `mojo::PendingRemote`. Please always ensure that you check to make sure the
 service is not null before calling `MakeRemote()` and return an empty pending
-remote if it is `mojo::PendingRemote<mojom::FakeService>()`.
+remote if it is `mojo::PendingRemote<mojom::ExampleService>()`.
 
 C++
 
-brave/components/fake/fake_service_impl.cc
+brave/components/example/example_service_impl.cc
 ```cpp
-namespace fake {
-class FakeServiceImpl : public KeyedService, public mojom::FakeService {
+namespace example {
+class ExampleServiceImpl : public KeyedService, public mojom::ExampleService {
 ...
 }
-}  // namespace fake
+}  // namespace example
 ```
 
-brave/browser/fake/fake_service_factory.cc
+brave/browser/example/example_service_factory.cc
 ```cpp
-mojo::PendingRemote<mojom::FakeService> FakeServiceFactory::GetRemoteForProfile(
+mojo::PendingRemote<mojom::ExampleService> ExampleServiceFactory::GetRemoteForProfile(
     content::BrowserContext* context) {
   auto* instance = GetInstance()->GetServiceForBrowserContext(context, true);
   if (!instance) {
-    return mojo::PendingRemote<mojom::FakeService>();
+    return mojo::PendingRemote<mojom::ExampleService>();
   }
-  return static_cast<fake::FakeServiceImpl*>(instance)->MakeRemote();
+  return static_cast<example::ExampleServiceImpl*>(instance)->MakeRemote();
 }
 
-void FakeServiceFactory::BindRemoteForProfile(
+void ExampleServiceFactory::BindRemoteForProfile(
     content::BrowserContext* context,
-    mojo::PendingReceiver<fake::mojom::FakeService> receiver) {
-  auto* service = static_cast<fake::FakeServiceImpl*>(
+    mojo::PendingReceiver<example::mojom::ExampleService> receiver) {
+  auto* service = static_cast<example::ExampleServiceImpl*>(
       GetInstance()->GetServiceForBrowserContext(context, true));
   if (service) {
     service->Bind(std::move(receiver));
   }
 }
 
-static jlong JNI_FakeService_GetForProfile(
+static jlong JNI_ExampleService_GetForProfile(
     JNIEnv* env,
     const base::android::JavaParamRef<jobject>& profile_android) {
   auto* profile = Profile::FromJavaObject(profile_android);
   auto pending =
-      FakeServiceFactory::GetInstance()->GetRemoteService(profile);
+      ExampleServiceFactory::GetInstance()->GetRemoteService(profile);
   return pending.PassPipe().release().value()
 }
 ```
 
 Java
 
-brave/browser/fake/android/java/src/org/chromium/brave/browser/fake/FakeServiceFactory.java
+brave/browser/example/android/java/src/org/chromium/brave/browser/example/ExampleServiceFactory.java
 ```java
-public @Nullable FakeService getForProfile(Profile profile,
+public @Nullable ExampleService getForProfile(Profile profile,
         @Nullable ConnectionErrorHandler connectionErrorHandler) {
-    long nativeHandle = FakeServiceFactoryJni.get().getForProfile(profile);
+    long nativeHandle = ExampleServiceFactoryJni.get().getForProfile(profile);
     MessagePipeHandle handle =
             CoreImpl.getInstance().acquireNativeHandle(nativeHandle).
             toMessagePipeHandle();
     if (!handle.isValid()) {
       return null;
     }
-    FakeService fakeService =
-        FakeService.MANAGER.attachProxy(handle, 0);
+    ExampleService exampleService =
+        ExampleService.MANAGER.attachProxy(handle, 0);
     if (connectionErrorHandler != null) {
-        Handler handler = ((Interface.Proxy) fakeService).getProxyHandler();
+        Handler handler = ((Interface.Proxy) exampleService).getProxyHandler();
         handler.setErrorHandler(connectionErrorHandler);
     }
-    return fakeService;
+    return exampleService;
 }
 ```
 
@@ -141,44 +141,44 @@ check both `Profile` and `ProfileIOS`
 
 obj-c
 
-brave/ios/browser/fake/fake_service_factory.mm
+brave/ios/browser/example/example_service_factory.mm
 ```cpp
-mojo::PendingRemote<fake::mojom::FakeService> FakeServiceFactory::GetForProfile(
+mojo::PendingRemote<example::mojom::ExampleService> ExampleServiceFactory::GetForProfile(
     ProfileIOS* profile) {
-  auto* service = GetInstance()->GetServiceForProfileAs<fake::FakeServiceImpl>(
+  auto* service = GetInstance()->GetServiceForProfileAs<example::ExampleServiceImpl>(
       profile, true);
   if (!service) {
-    return mojo::PendingRemote<fake::mojom::FakeService>();
+    return mojo::PendingRemote<example::mojom::ExampleService>();
   }
   return service->MakeRemote();
 }
 
-@implementation FakeFakeServiceFactory
+@implementation ExampleServiceFactory
 + (nullable id)getForProfile:(ProfileIOS*)profile {
-  auto* fake_service =
-      FakeServiceFactory::GetRemoteForProfile(profile);
-  if (!fake_service) {
+  auto* example_service =
+      ExampleServiceFactory::GetRemoteForProfile(profile);
+  if (!example_service) {
     return nil;
   }
-  mojo::PendingRemote<fake::mojom::FakeService> pending_remote;
-  fake_service->Bind(pending_remote.InitWithNewPipeAndPassReceiver());
-  return [[FakeFakeServiceMojoImpl alloc]
-      initWithFakeService:std::move(pending_remote)];
+  mojo::PendingRemote<example::mojom::ExampleService> pending_remote;
+  example_service->Bind(pending_remote.InitWithNewPipeAndPassReceiver());
+  return [[ExampleServiceMojoImpl alloc]
+      initWithExampleService:std::move(pending_remote)];
 }
 ```
 
-brave/ios/browser/fake/fake_service_factory_wrapper.h
+brave/ios/browser/example/example_service_factory_wrapper.h
 ```objc
-@protocol FakeFakeService;
+@protocol ExampleService;
 
 OBJC_EXPORT
-NS_SWIFT_NAME(Fake.FakeServiceFactory)
-@interface FakeFakeServiceFactory
-    : KeyedServiceFactoryWrapper < id <FakeFakeService>
+NS_SWIFT_NAME(Example.ExampleServiceFactory)
+@interface ExampleServiceFactory
+    : KeyedServiceFactoryWrapper < id <ExampleService>
 > @end
 ```
 
 swift
 ```swift
-FakeServiceFactory.get(privateMode: privateMode),
+ExampleServiceFactory.get(privateMode: privateMode),
 ```
