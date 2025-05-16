@@ -124,20 +124,20 @@ public @Nullable ExampleService getForProfile(Profile profile,
 }
 ```
 
-#### IOS
+#### iOS
 
-IOS has separate factories because Profile subclasses `web::BrowserState`
+iOS has separate factories because Profile subclasses `web::BrowserState`
 instead of `content::BrowserContext`, but the same principles apply to
 `ProfileKeyedServiceFactoryIOS`.
 
-#### IOS and Desktop profile checks
+#### iOS and Desktop profile checks
 
 TODO - standardize a way to maintain consistency between
 `GetBrowserContextToUse` methods on desktop and android. Possibly using some
 constants like `kRegular`, `kIncognito`, `kTor` so the same code can be used to
 check both `Profile` and `ProfileIOS`
 
-#### IOS keyed services and mojo
+#### iOS keyed services and mojo
 
 obj-c
 
