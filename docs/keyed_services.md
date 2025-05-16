@@ -1,7 +1,7 @@
 ### Keyed Services
 
 Most features should be scoped to a Profile/BrowserContext and be
-BrowserContextKeyedServices per
+ProfileKeyedServiceFactory per
 [profile-architecture](https://www.chromium.org/developers/design-documents/profile-architecture/).
 What this means is that all associated preferences and other locally stored
 state will be per-profile. A service may sometimes be shared between the regular
