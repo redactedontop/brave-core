@@ -190,11 +190,13 @@ ConversationAPIClient::ConversationEvent::ConversationEvent(
     : role(role), type(type), content(content), topic(topic) {}
 ConversationAPIClient::ConversationEvent::ConversationEvent() = default;
 ConversationAPIClient::ConversationEvent::~ConversationEvent() = default;
+
 ConversationAPIClient::ConversationEvent::ConversationEvent(
-    const ConversationEvent&) = default;
-ConversationAPIClient::ConversationEvent&
-ConversationAPIClient::ConversationEvent::operator=(const ConversationEvent&) =
-    default;
+    ConversationAPIClient::ConversationEvent&& other) = default;
+
+ConversationAPIClient::ConversationEvent& ConversationEvent::operator=(
+    ConversationAPIClient::ConversationEvent&& other) = default;
+
 
 ConversationAPIClient::ConversationAPIClient(
     const std::string& model_name,
@@ -216,7 +218,7 @@ void ConversationAPIClient::ClearAllQueries() {
 }
 
 void ConversationAPIClient::PerformRequest(
-    const std::vector<ConversationEvent>& conversation,
+    std::vector<ConversationEvent> conversation,
     const std::string& selected_language,
     GenerationDataCallback data_received_callback,
     GenerationCompletedCallback completed_callback,
@@ -256,7 +258,7 @@ std::string ConversationAPIClient::CreateJSONRequestBody(
 }
 
 void ConversationAPIClient::PerformRequestWithCredentials(
-    const std::vector<ConversationEvent>& conversation,
+    std::vector<ConversationEvent> conversation,
     const std::string& selected_language,
     const std::optional<std::string>& model_name,
     GenerationDataCallback data_received_callback,
