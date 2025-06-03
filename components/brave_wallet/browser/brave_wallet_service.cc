@@ -27,6 +27,7 @@
 #include "brave/components/brave_wallet/browser/pref_names.h"
 #include "brave/components/brave_wallet/browser/tx_service.h"
 #include "brave/components/brave_wallet/browser/wallet_data_files_installer.h"
+#include "brave/components/brave_wallet/common/brave_wallet.mojom-shared.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 #include "brave/components/brave_wallet/common/brave_wallet_response_helpers.h"
 #include "brave/components/brave_wallet/common/brave_wallet_types.h"
@@ -1282,7 +1283,9 @@ void BraveWalletService::OnGetImportInfo(
 void BraveWalletService::AddSignMessageRequest(
     mojom::SignMessageRequestPtr request,
     SignMessageRequestCallback callback) {
-  DCHECK(CoinSupportsDapps(request->coin));
+  // TODO(apaymyshev): fix ada check.
+  DCHECK(request->coin == mojom::CoinType::ADA ||
+         CoinSupportsDapps(request->coin));
 
   if (request->id < 0) {
     request->id = sign_message_id_++;
