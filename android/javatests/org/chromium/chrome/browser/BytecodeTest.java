@@ -1334,7 +1334,7 @@ public class BytecodeTest {
         Assert.assertTrue(
                 constructorsMatch(
                         "org/chromium/chrome/browser/omnibox/status/StatusMediator",
-                        "org/chromium/chrome/browser/omnibox/status/BraveStatusMediator",
+                        "org/chromium/chrome/browser/omnibox/status/BraveStatusMediator", // presubmit: ignore-long-line
                         PropertyModel.class,
                         Context.class,
                         UrlBarEditingTextStateProvider.class,
@@ -1342,7 +1342,7 @@ public class BytecodeTest {
                         LocationBarDataProvider.class,
                         PermissionDialogController.class,
                         OneshotSupplier.class,
-                        Supplier.class,
+                        ObservableSupplier.class,
                         PageInfoIphController.class,
                         WindowAndroid.class,
                         Supplier.class));
