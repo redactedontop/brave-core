@@ -14,7 +14,9 @@ namespace brave_account {
 BraveAccountService::BraveAccountService(
     PrefService* pref_service,
     scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory)
-    : pref_service_(pref_service), url_loader_factory_(url_loader_factory) {}
+    : pref_service_(pref_service), url_loader_factory_(url_loader_factory) {
+  pref_service_->SetString(prefs::kTest, "test");
+}
 
 BraveAccountService::~BraveAccountService() = default;
 
